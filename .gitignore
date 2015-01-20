@@ -1,0 +1,19 @@
+# CakePHP
+tmp/
+logs/
+vendor/
+plugins/
+config/app.php
+
+# OSX auto generated
+.DS_Store
+
+# IDE
+.idea
+
+# htaccess
+.htaccess
+webroot/.htaccess
+webroot/coverage
+
+composer.phar
