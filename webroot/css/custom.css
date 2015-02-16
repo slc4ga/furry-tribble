@@ -1,0 +1,14 @@
+.buttons .col-md-2,.col-sm-2,.col-md-5,.col-sm-5 {
+	padding: 0;
+}
+
+.btn-primary {
+	border-color: #fff;
+	border-width: 0;
+	border-right-width: 1px;
+	border-radius: 0;
+}
+
+.btn-success {
+	margin-bottom: 15px;
+}

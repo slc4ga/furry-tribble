@@ -13,42 +13,166 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-$cakeDescription = 'CakePHP: the rapid development php framework';
+use Cake\Controller\Component\AuthComponent;
+
+$cakeDescription = 'UVA Bands';
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-	<?= $this->Html->charset() ?>
-	<title>
-		<?= $cakeDescription ?>:
-		<?= $this->fetch('title') ?>
-	</title>
-	<?= $this->Html->meta('icon') ?>
-
-	<?= $this->Html->css('cake.generic') ?>
-
-	<?= $this->fetch('meta') ?>
-	<?= $this->fetch('css') ?>
-	<?= $this->fetch('script') ?>
+    <?= $this->Html->charset() ?>
+    <title>
+        <?= $cakeDescription ?>:
+        <?= $this->fetch('title') ?>
+    </title>
+    <?= $this->Html->meta('icon') ?>
+    <?= $this->Html->css('bootstrap') ?>
+    <?= $this->Html->css('custom') ?>
+    <?= $this->Html->css('sidebar') ?>
+    <?=
+        $this->Html->css(
+            'http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css',
+            array(
+                'inline' => false
+            )
+        );
+    ?>
+    <?= $this->Html->script('jquery-1.11.1.min') ?>
+    <?= $this->Html->script('http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js',
+            array(
+                'inline' => false
+            )
+        ) 
+    ?>
+    <?= $this->Html->script('bootstrap.min') ?>
+    <?= $this->fetch('meta') ?>
+    <?= $this->fetch('css') ?>
+    <?= $this->fetch('script') ?>
 </head>
 <body>
-	<div id="container">
-		<div id="header">
-			<h1><?= $this->Html->link($cakeDescription, 'http://cakephp.org') ?></h1>
-		</div>
-		<div id="content">
-			<?= $this->Flash->render() ?>
-
-			<?= $this->fetch('content') ?>
-		</div>
-		<div id="footer">
-			<?= $this->Html->link(
-					$this->Html->image('cake.power.gif', ['alt' => $cakeDescription, 'border' => '0']),
-					'http://www.cakephp.org/',
-					['target' => '_blank', 'escape' => false]
-				)
-			?>
-		</div>
-	</div>
+    <div id="container">
+        <div id="content">
+            <div class="container">
+                <!-- Top navbar -->
+                <header>
+                    <div class="row">
+                        <div class="col-md-5 col-sm-5 col-md-offset-1 col-sm-offset-1">
+                            <h1>
+                                <?= 
+                                    $this->Html->link(
+                                        'Profile',
+                                        ['controller' => 'Users', 'action' => '#'],
+                                        array (
+                                            'class' => 'btn btn-primary'
+                                        )
+                                    ) 
+                                ?>
+                            </h1>    
+                        </div>
+                        <div class="col-md-5 col-sm-5">
+                            <h1>
+                                <?= 
+                                    $this->Html->link(
+                                        'Login',
+                                        ['controller' => 'Users', 'action' => '#'],
+                                        array (
+                                            'class' => 'btn btn-primary'
+                                        )
+                                    ) 
+                                ?>
+                            </h1> 
+                        </div>
+                    </div>
+                </header>
+                <hr>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <!-- Flash -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <?= $this->Flash->render() ?>
+                            </div>
+                        </div>
+                        <!-- Content -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <?php
+                                    $myTemplates = [
+                                        'message' => '<div class="alert alert-warning">{{content}}</div>'
+                                    ];
+                                    $this->Form->templates($myTemplates);
+                                ?>
+                                <?= $this->fetch('content') ?>
+                            </div>
+                        </div>
+                        <div class="row">
+	                        <div class="col-md-2 col-md-offset-1 col-sm-2 col-sm-offset-1">
+	                        	<?= 
+                                    $this->Html->link(
+                                        'Profile',
+                                        ['controller' => 'Users', 'action' => '#'],
+                                        array (
+                                            'class' => 'btn btn-primary'
+                                        )
+                                    ) 
+                                ?>
+	                        </div>
+	                        <div class="col-md-2 col-sm-2">
+	                        	<?= 
+                                    $this->Html->link(
+                                        'My Bands',
+                                        ['controller' => 'Users', 'action' => '#'],
+                                        array (
+                                            'class' => 'btn btn-primary'
+                                        )
+                                    ) 
+                                ?>
+	                        </div>
+	                        <div class="col-md-2 col-sm-2">
+	                        	<?= 
+                                    $this->Html->link(
+                                        'Camera',
+                                        ['controller' => 'Users', 'action' => '#'],
+                                        array (
+                                            'class' => 'btn btn-primary'
+                                        )
+                                    ) 
+                                ?>
+	                        </div>
+	                        <div class="col-md-2 col-sm-2">
+	                        	<?= 
+                                    $this->Html->link(
+                                        'Top Comments',
+                                        ['controller' => 'Users', 'action' => '#'],
+                                        array (
+                                            'class' => 'btn btn-primary'
+                                        )
+                                    ) 
+                                ?>
+	                        </div>
+	                        <div class="col-md-2 col-sm-2">
+	                        	<?= 
+                                    $this->Html->link(
+                                        'Active Bands',
+                                        ['controller' => 'Users', 'action' => '#'],
+                                        array (
+                                            'class' => 'btn btn-primary'
+                                        )
+                                    ) 
+                                ?>
+	                        </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="navbar-bottom">
+                    <div class="footer">
+                        <hr>
+                        &copy; 2015
+                        <br><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
