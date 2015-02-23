@@ -1,7 +1,8 @@
 <!-- File: src/Template/Bands/view.ctp -->
 <?php 
-$user_id = $_SERVER['PHP_AUTH_USER']; //get netbadge
-echo "User: " + $user_id;
+// debug(); exit();
+// $user_id = $_SERVER['uid']; //get netbadge
+// echo "User: " . $user_id;
 ?>
 <div class="row">
 	<div class="col-md-10 col-sm-10 col-md-offset-1 col-sm-offset-1">
@@ -33,8 +34,17 @@ echo "User: " + $user_id;
 							<tr>
 								<td><?= $comment['text']?></td>
 								<td><?= date('n/j/Y g:i A',strtotime($comment['timestamp'])); ?></td>
-								<td>votes</td>
-								<td>action buttons</td>
+								<td>
+									<?= $comment['votes'] ?>
+								</td>
+								<td>
+									<?php if(!isset($comment['liked'])): ?>
+										<?= $this->Html->link('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>', 
+																['controller' => 'bands', 'action' => 'upvote', $band_id], 
+																['escape' => False]);
+										?>
+									<?php endif; ?>
+								</td>
 							</tr>
 						<?php endforeach; ?>
 					</tbody>

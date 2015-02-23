@@ -15,6 +15,8 @@
 namespace App\Controller;
 
 use Cake\Controller\Controller;
+use Cake\Event\Event;
+use Cake\ORM\TableRegistry;
 
 /**
  * Application Controller
@@ -38,4 +40,16 @@ class AppController extends Controller {
         'Session',
         'Flash'
     );
+
+    public function beforeFilter(Event $event) {
+        $usersTable = TableRegistry::get('Users');
+        $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
+        if(is_null($user) || empty($user)) {
+        	$new_user = $usersTable->newEntity(['username' => $_SERVER['uid']]);
+        	debug($new_user);
+        	if($usersTable->save($new_user)) {
+                $this->Flash->success(__('You have been successfully added to the userbase.'));        
+            } 
+        }
+    }
 }
