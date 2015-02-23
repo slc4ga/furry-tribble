@@ -29,7 +29,13 @@ class BandsController extends AppController {
 
     public function intialize() {
         parent::initialize();
+        // $this->Bands 
         // $this->loadComponent('Paginator');
+    }
+
+    public function index() {
+        $bands = $this->Bands->find('all')->toArray();
+        $this->set('bands', $bands);
     }
     
     public function addComment($id = null){
@@ -62,6 +68,18 @@ class BandsController extends AppController {
         $comments = $commentsTable->find('all')->where(['band_id' => $id])->toArray();
         $this->set('comments', $comments);
         $this->set("band_id", $id);
+    }
+
+    public function addBand() {
+        if ($this->request->is('post')) {
+            $data = $this->request->data;
+            $band = $this->Bands->newEntity();
+            $band = $this->Bands->patchEntity($band, $data);
+            if($this->Bands->save($band)) {
+                $this->Flash->success(__('Your band has been saved.'));
+                $this->redirect(['action' => 'view', $band['id']]);        
+            }         
+        }
     }
 }
 ?>

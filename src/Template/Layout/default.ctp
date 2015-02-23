@@ -89,7 +89,7 @@ $cakeDescription = 'UVA Bands';
                     <div class="col-md-12 col-sm-12">
                         <!-- Flash -->
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1">
                                 <?= $this->Flash->render() ?>
                             </div>
                         </div>
@@ -120,8 +120,8 @@ $cakeDescription = 'UVA Bands';
 	                        <div class="col-md-2 col-sm-2">
 	                        	<?= 
                                     $this->Html->link(
-                                        'My Bands',
-                                        ['controller' => 'Users', 'action' => '#'],
+                                        'All Bands',
+                                        ['controller' => 'bands', 'action' => 'index'],
                                         array (
                                             'class' => 'btn btn-primary'
                                         )

@@ -1,5 +1,8 @@
 <!-- File: src/Template/Bands/view.ctp -->
-<div cl
+<?php 
+$user_id = $_SERVER['PHP_AUTH_USER']; //get netbadge
+echo "User: " + $user_id;
+?>
 <div class="row">
 	<div class="col-md-10 col-sm-10 col-md-offset-1 col-sm-offset-1">
 		<div class="row">
@@ -29,7 +32,7 @@
 						<?php foreach ($comments as $comment): ?>
 							<tr>
 								<td><?= $comment['text']?></td>
-								<td><?= $comment['timestamp']?></td>
+								<td><?= date('n/j/Y g:i A',strtotime($comment['timestamp'])); ?></td>
 								<td>votes</td>
 								<td>action buttons</td>
 							</tr>
