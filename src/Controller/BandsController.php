@@ -76,7 +76,6 @@ class BandsController extends AppController {
 
             
             $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
-            // debug($user[0]['id']);
             $query = $votesTable->find('all')->where(['user_id' => $user[0]['id']])->toArray();
             if(!empty($query)) {
                 $com['liked'] = True;
@@ -111,6 +110,31 @@ class BandsController extends AppController {
             $this->Flash->success(__('Your vote has been saved.'));
             $this->redirect(['action' => 'view', $id]);    
         }      
+    }
+
+    public function topComments() {
+        // select comment_id, count(*) from user_likes group by comment_id order by count(*) desc;
+        $votesTable = TableRegistry::get('UserLikes');
+        $usersTable = TableRegistry::get('Users');
+        $commentsTable = TableRegistry::get('Comments');
+        $query = $votesTable->find('all');
+        $query->group('comment_id')
+                ->order(['count(*)' => 'DESC'])
+                ->limit(100)
+                ->select(['comment_id','count' => $query->func()->count('*')]);
+        $commentVotes = $query->toArray();
+        foreach ($commentVotes as $commentGroup) {
+            $comment = $commentsTable->find('all')->where(['id' => $commentGroup['comment_id']])->toArray();
+            $commentGroup['comment'] = $comment[0];
+
+            $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
+            $query = $votesTable->find('all')->where(['user_id' => $user[0]['id']])->toArray();
+            if(!empty($query)) {
+                $commentGroup['liked'] = True;
+            }
+        }
+        $this->set('commentVotes', $commentVotes);
+             
     }
 }
 ?>

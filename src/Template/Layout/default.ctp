@@ -143,7 +143,7 @@ $cakeDescription = 'UVA Bands';
 	                        	<?= 
                                     $this->Html->link(
                                         'Top Comments',
-                                        ['controller' => 'Users', 'action' => '#'],
+                                        ['controller' => 'bands', 'action' => 'topComments'],
                                         array (
                                             'class' => 'btn btn-primary'
                                         )
