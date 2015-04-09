@@ -28,22 +28,7 @@ $cakeDescription = 'UVA Bands';
     <?= $this->Html->meta('icon') ?>
     <?= $this->Html->css('bootstrap') ?>
     <?= $this->Html->css('custom') ?>
-    <?= $this->Html->css('sidebar') ?>
-    <?=
-        $this->Html->css(
-            'http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css',
-            array(
-                'inline' => false
-            )
-        );
-    ?>
     <?= $this->Html->script('jquery-1.11.1.min') ?>
-    <?= $this->Html->script('http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js',
-            array(
-                'inline' => false
-            )
-        ) 
-    ?>
     <?= $this->Html->script('bootstrap.min') ?>
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
@@ -54,36 +39,26 @@ $cakeDescription = 'UVA Bands';
         <div id="content">
             <div class="container">
                 <!-- Top navbar -->
-                <header>
-                    <div class="row">
-                        <div class="col-md-5 col-sm-5 col-md-offset-1 col-sm-offset-1">
-                            <h1>
-                                <?= 
-                                    $this->Html->link(
-                                        'Profile',
-                                        ['controller' => 'Users', 'action' => '#'],
-                                        array (
-                                            'class' => 'btn btn-primary'
-                                        )
-                                    ) 
-                                ?>
-                            </h1>    
+                <?php if(isset($admin) && $admin): ?>
+                    <header>
+                        <div class="row">
+                            <div class="col-md-5 col-sm-5 col-md-offset-6 col-sm-offset-6">
+                                <h1>
+
+                                    <?= 
+                                        $this->Html->link(
+                                            'Admin Panel',
+                                            ['controller' => 'Users', 'action' => 'admin'],
+                                            array (
+                                                'class' => 'btn btn-primary'
+                                            )
+                                        ) 
+                                    ?>
+                                </h1> 
+                            </div>
                         </div>
-                        <div class="col-md-5 col-sm-5">
-                            <h1>
-                                <?= 
-                                    $this->Html->link(
-                                        'Login',
-                                        ['controller' => 'Users', 'action' => '#'],
-                                        array (
-                                            'class' => 'btn btn-primary'
-                                        )
-                                    ) 
-                                ?>
-                            </h1> 
-                        </div>
-                    </div>
-                </header>
+                    </header>
+                <?php endif; ?>
                 <hr>
                 <div class="row">
                     <div class="col-md-12 col-sm-12">
@@ -110,7 +85,7 @@ $cakeDescription = 'UVA Bands';
 	                        	<?= 
                                     $this->Html->link(
                                         'Profile',
-                                        ['controller' => 'Users', 'action' => '#'],
+                                        ['controller' => 'Users', 'action' => 'profile'],
                                         array (
                                             'class' => 'btn btn-primary'
                                         )
@@ -132,7 +107,7 @@ $cakeDescription = 'UVA Bands';
 	                        	<?= 
                                     $this->Html->link(
                                         'Camera',
-                                        ['controller' => 'Users', 'action' => '#'],
+                                        ['controller' => 'bands', 'action' => 'camera'],
                                         array (
                                             'class' => 'btn btn-primary'
                                         )
@@ -154,7 +129,7 @@ $cakeDescription = 'UVA Bands';
 	                        	<?= 
                                     $this->Html->link(
                                         'Active Bands',
-                                        ['controller' => 'Users', 'action' => '#'],
+                                        ['controller' => 'bands', 'action' => 'activeBands'],
                                         array (
                                             'class' => 'btn btn-primary'
                                         )

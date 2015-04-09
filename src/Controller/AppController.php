@@ -51,5 +51,7 @@ class AppController extends Controller {
                 $this->Flash->success(__('You have been successfully added to the userbase.'));        
             } 
         }
+        
+        $this->set('admin', $user[0]['admin'] == 1);
     }
 }

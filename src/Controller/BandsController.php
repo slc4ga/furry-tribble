@@ -8,29 +8,15 @@ use Cake\Event\Event;
 use Cake\Core\Configure;
 use Cake\Auth\DefaultPasswordHasher;
 use Cake\ORM\TableRegistry;
+use Cake\ORM\Entity;
+use Cake\Network\Http\Client;
+
 
 class BandsController extends AppController {
     public $components = ['Flash'];
 
-    // public function beforeFilter(Event $event) {
-    //     parent::beforeFilter($event);
-    //     $this->Auth->allow([
-    //         'signup',
-    //         'logout',
-    //     ]);
-    // }
-
-    // public function isAuthorized($user) {
-    //     if (in_array($this->request->action, ['profile', 'edit_profile'])) {
-    //         return true;
-    //     }
-    //     return parent::isAuthorized($user);
-    // }
-
     public function intialize() {
         parent::initialize();
-        // $this->Bands 
-        // $this->loadComponent('Paginator');
     }
 
     public function index() {
@@ -51,9 +37,24 @@ class BandsController extends AppController {
         if ($this->request->is('post')) {
             $data = $this->request->data;
             $commentsTable = TableRegistry::get('Comments');
-            $comment = $commentsTable->newEntity();
+            $bandsTable = TableRegistry::get('Bands');
+            $usersTable = TableRegistry::get('Users');
+
+            $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
+            $comment = $commentsTable->newEntity(['user_id' => $user[0]['id']]);
             $comment = $commentsTable->patchEntity($comment, $data);
-            $commentsTable->save($comment);            
+            $commentsTable->save($comment);
+            // debug($data); exit();
+            
+            $band = $this->Bands->find('all')->where(['id' => $data['band_id']])->toArray();
+            if($band[0]['active'] == 0) {
+                $band = $usersTable->patchEntity($band[0], ['active' => 1]);
+
+                if($this->Bands->save($band)) {
+                    $this->Flash->success(__('This band has been successfully re-activated, and your comment was added.'));  
+                } 
+            }
+
         }
         $this->redirect(['action' => 'view', $data['band_id']]);
     }
@@ -67,6 +68,11 @@ class BandsController extends AppController {
         $votesTable = TableRegistry::get('UserLikes');
         $usersTable = TableRegistry::get('Users');
 
+        $adminTable = TableRegistry::get('Admins');
+        $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
+        $admin = $adminTable->find('all')->where(['user_id' => $user[0]['id']])->toArray();
+        $this->set('admin', !empty($admin));
+
         $comments = $commentsTable->find('all')->where(['band_id' => $id])->toArray();
         foreach($comments as $com) {
             $query = $votesTable->find('all')->where(['comment_id' => $com['id']]);
@@ -75,10 +81,15 @@ class BandsController extends AppController {
             $com['votes'] = $query[0]['count'];
 
             
-            $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
-            $query = $votesTable->find('all')->where(['user_id' => $user[0]['id']])->toArray();
+            $query = $votesTable->find('all')->where(['user_id' => $user[0]['id']])
+                                            ->where(['comment_id' => $com['id']])
+                                            ->toArray();
             if(!empty($query)) {
                 $com['liked'] = True;
+            }
+            if(!empty($admin)) {
+                $poster = $usersTable->find('all')->where(['id' => $com['user_id']])->toArray();
+                $com['username'] = $poster[0]['username'];
             }
         }
         $this->set('comments', $comments);
@@ -97,7 +108,7 @@ class BandsController extends AppController {
         }
     }
 
-    public function upvote($id) {
+    public function upvote($id, $band_id) {
         if(is_null($id)) {
             $this->redirect(['controller' => 'Bands', 'action' => 'index']);
         }
@@ -108,8 +119,46 @@ class BandsController extends AppController {
         $vote = $votesTable->newEntity(['user_id' => $user[0]['id'], 'comment_id' => $id]);
         if($votesTable->save($vote)) {
             $this->Flash->success(__('Your vote has been saved.'));
-            $this->redirect(['action' => 'view', $id]);    
+            $this->redirect(['action' => 'view', $band_id]);    
         }      
+    }
+
+    public function flag($id, $band_id) {
+        if(is_null($id)) {
+            $this->redirect(['controller' => 'Bands', 'action' => 'index']);
+        }
+
+        $comments = TableRegistry::get('Comments');
+        $comment = $comments->get($id);
+        $comments->patchEntity($comment, ['flagged' => 1]);
+       
+        if($comments->save($comment)) {
+            $this->Flash->success(__('Your flag has been saved.'));
+            $this->redirect(['action' => 'view', $band_id]);    
+        }      
+    }
+
+    public function delete($id, $band_id) {
+        $adminTable = TableRegistry::get('Admins');
+        $usersTable = TableRegistry::get('Users');
+        $commentsTable = TableRegistry::get('Comments');
+        $likesTable = TableRegistry::get('UserLikes');
+
+        $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
+        $admin = $adminTable->find('all')->where(['user_id' => $user[0]['id']])->toArray();
+        
+        if(empty($admin)) {
+            $this->redirect(['controller' => 'Bands', 'action' => 'index']);
+        }
+
+        if(is_null($id)) {
+            $this->redirect(['controller' => 'Bands', 'action' => 'index']);
+        }
+
+        $comment = $commentsTable->query()->delete()->where(['id' => $id])->execute();
+        $like = $likesTable->query()->delete()->where(['comment_id' => $id])->execute();
+        $this->Flash->success(__('This comment has been deleted.'));
+        $this->redirect(['action' => 'view', $band_id]);    
     }
 
     public function topComments() {
@@ -123,18 +172,116 @@ class BandsController extends AppController {
                 ->limit(100)
                 ->select(['comment_id','count' => $query->func()->count('*')]);
         $commentVotes = $query->toArray();
+        
+        $adminTable = TableRegistry::get('Admins');
+        $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
+        $admin = $adminTable->find('all')->where(['user_id' => $user[0]['id']])->toArray();
+        $this->set('admin', !empty($admin));
+
         foreach ($commentVotes as $commentGroup) {
             $comment = $commentsTable->find('all')->where(['id' => $commentGroup['comment_id']])->toArray();
-            $commentGroup['comment'] = $comment[0];
+            
 
             $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
             $query = $votesTable->find('all')->where(['user_id' => $user[0]['id']])->toArray();
             if(!empty($query)) {
                 $commentGroup['liked'] = True;
             }
+            if(!empty($admin)) {
+                $poster = $usersTable->find('all')->where(['id' => $comment[0]['user_id']])->toArray();
+                $comment[0]['username'] = $poster[0]['username'];
+            }
+            $commentGroup['comment'] = $comment[0];
         }
         $this->set('commentVotes', $commentVotes);
              
+    }
+
+    public function deactivateBand($band_id = null) {
+        if(is_null($band_id)) {
+            $this->redirect(['controller' => 'Bands', 'action' => 'index']);
+        }
+
+        $usersTable = TableRegistry::get('Users');
+        $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
+        
+        if($user[0]['admin'] == 0) {
+            $this->redirect(['controller' => 'Bands', 'action' => 'index']);
+        } 
+
+        $band = $this->Bands->find('all')->where(['id' => $band_id])->toArray();
+        $band = $usersTable->patchEntity($band[0], ['active' => 0]);
+
+        if($this->Bands->save($band)) {
+            $this->Flash->success(__('The band has been successfully deactivated.'));
+            $this->redirect(['controller' => 'Users', 'action' => 'admin']);        
+        } 
+    }
+
+    public function activateBand($band_id = null) {
+        if(is_null($band_id)) {
+            $this->redirect(['controller' => 'Bands', 'action' => 'index']);
+        }
+
+        $usersTable = TableRegistry::get('Users');
+        $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
+        
+        if($user[0]['admin'] == 0) {
+            $this->redirect(['controller' => 'Bands', 'action' => 'index']);
+        } 
+
+        $band = $this->Bands->find('all')->where(['id' => $band_id])->toArray();
+        $band = $usersTable->patchEntity($band[0], ['active' => 1]);
+
+        if($this->Bands->save($band)) {
+            $this->Flash->success(__('The band has been successfully activated.'));
+            $this->redirect(['controller' => 'Users', 'action' => 'admin']);        
+        } 
+    }
+
+    public function camera() {
+
+    }
+
+    public function activeBands() {
+        $settingsTable = TableRegistry::get('Settings');
+        $settings = $settingsTable->find('all')->toArray();
+        $comments = $settings[0]['value'];
+        $days = $settings[1]['value'];
+        $this->set('days', $days);
+        $this->set('comments', $comments);
+
+        $bandsTable = TableRegistry::get('Bands');
+        $commentsTable = TableRegistry::get('Comments');
+
+        $bands = $bandsTable->find('all')
+                            ->order(['active' => 'DESC'])
+                            ->toArray();
+
+
+        $old_date = date("Y-m-d", strtotime("-$days days") );  
+
+        foreach ($bands as $band) {
+            $comment = $commentsTable->find('all')->where(['band_id' => $band['id']])
+                                                ->where(['timestamp >' => $old_date])
+                                                ->order(['timestamp' => 'DESC'])
+                                                ->limit(100)
+                                                ->toArray();
+
+            $band['comments_in_days'] = count($comment);
+            if(count($comment) > 0) {
+                $band['last_comment'] = $comment[0];
+            }
+
+            $query = $commentsTable->find('all')->where(['band_id' => $band['id']]);
+            $query->select(['count' => $query->func()->count('*')]);
+            $query = $query->all()->toArray();
+            $band['comments'] = $query[0]['count'];
+        }
+        usort($bands, function($a, $b) {
+            return $b['comments_in_days'] - $a['comments_in_days'];
+        });
+        $this->set('bands', $bands);
     }
 }
 ?>
