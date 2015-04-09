@@ -11,6 +11,12 @@ use Cake\ORM\TableRegistry;
 
 class UsersController extends AppController {
     public $components = ['Flash'];
+    public $paginate = [
+        'limit' => 100,
+        'order' => [
+            'Bands.id' => 'asc'
+        ]
+    ];
 
     public function intialize() {
         parent::initialize();
@@ -86,8 +92,8 @@ class UsersController extends AppController {
 
         $votesTable = TableRegistry::get('UserLikes');
         $bands = $bandsTable->find('all')
-                            ->order(['active' => 'DESC'])
-                            ->toArray();
+                            ->order(['active' => 'DESC']);
+        $this->paginate($bands);
 
 
         $old_date = date("Y-m-d", strtotime("-$days days") );  

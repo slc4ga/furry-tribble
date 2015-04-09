@@ -14,14 +14,20 @@ use Cake\Network\Http\Client;
 
 class BandsController extends AppController {
     public $components = ['Flash'];
+    public $paginate = [
+        'limit' => 100,
+        'order' => [
+            'Comments.timestamp' => 'asc'
+        ]
+    ];
 
     public function intialize() {
         parent::initialize();
     }
 
     public function index() {
-        $bands = $this->Bands->find('all')->toArray();
-        $this->set('bands', $bands);
+        $bands = $this->Bands->find('all');
+        $this->set('bands', $this->paginate($bands));
     }
     
     public function addComment($id = null){
@@ -43,22 +49,40 @@ class BandsController extends AppController {
             $username = 'slc4ga';
 
             $user = $usersTable->find('all')->where(['username' => $username])->toArray();
-            $comment = $commentsTable->newEntity(['user_id' => $user[0]['id']]);
-            $comment = $commentsTable->patchEntity($comment, $data);
-            $commentsTable->save($comment);
-            // debug($data); exit();
-            
-            $band = $this->Bands->find('all')->where(['id' => $data['band_id']])->toArray();
-            if($band[0]['active'] == 0) {
-                $band = $usersTable->patchEntity($band[0], ['active' => 1]);
+            // check if comment already there
+            $comment = $commentsTable->find('all')->where(['text' => $data['text']])->where(['user_id' => $user[0]['id']])->toArray();
+            if(empty($comment)) {
+                $comment = $commentsTable->newEntity(['user_id' => $user[0]['id']]);
+                $comment = $commentsTable->patchEntity($comment, $data);
+                $commentsTable->save($comment);
+                // debug($data); exit();
+                
+                $band = $this->Bands->find('all')->where(['id' => $data['band_id']])->toArray();
+                if($band[0]['active'] == 0) {
+                    $band = $usersTable->patchEntity($band[0], ['active' => 1]);
 
-                if($this->Bands->save($band)) {
-                    $this->Flash->success(__('This band has been successfully re-activated, and your comment was added.'));  
-                } 
+                    if($this->Bands->save($band)) {
+                        $this->Flash->success(__('This band has been successfully re-activated, and your comment was added.'));  
+                    } 
+                }
+            } else {
+                $this->Flash->error(__('That exact comment has already been added, so you can\'t add it again.'));  
             }
 
         }
         $this->redirect(['action' => 'view', $data['band_id']]);
+    }
+
+    public function home() {
+        if ($this->request->is('post')) {
+            $data = $this->request->data;
+            $band = $this->Bands->find('all')->where(['qr_code' => $data['band_id']])->toArray();
+            if(!empty($band)) {
+                $this->redirect(['controller' => 'Bands', 'action' => 'addComment', $band[0]['id']]);    
+            } else {
+                $this->Flash->error(__('Uhoh! That band doesn\'t exist...please try entering the ID number again.'));  
+            }
+        }
     }
 
     public function view($id = null) {
@@ -138,6 +162,21 @@ class BandsController extends AppController {
        
         if($comments->save($comment)) {
             $this->Flash->success(__('Your flag has been saved.'));
+            $this->redirect(['action' => 'view', $band_id]);    
+        }      
+    }
+
+    public function unflag($id, $band_id) {
+        if(is_null($id)) {
+            $this->redirect(['controller' => 'Bands', 'action' => 'index']);
+        }
+
+        $comments = TableRegistry::get('Comments');
+        $comment = $comments->get($id);
+        $comments->patchEntity($comment, ['flagged' => 0]);
+       
+        if($comments->save($comment)) {
+            $this->Flash->success(__('You have successfully removed the flag on this comment.'));
             $this->redirect(['action' => 'view', $band_id]);    
         }      
     }

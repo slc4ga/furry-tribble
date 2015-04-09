@@ -106,8 +106,8 @@ $cakeDescription = 'UVA Bands';
 	                        <div class="col-md-2 col-sm-2">
 	                        	<?= 
                                     $this->Html->link(
-                                        'Camera',
-                                        ['controller' => 'bands', 'action' => 'camera'],
+                                        'Home',
+                                        ['controller' => 'bands', 'action' => 'home'],
                                         array (
                                             'class' => 'btn btn-primary'
                                         )

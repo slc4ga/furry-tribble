@@ -55,5 +55,6 @@ class AppController extends Controller {
         // $this->set('admin', $user[0]['admin'] == 1);
         // $this->set('username', $_SERVER['uid']);
         $this->set('username', 'slc4ga');
+        $this->set('admin', 1);
     }
 }

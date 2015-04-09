@@ -157,6 +157,11 @@ table th, td {
                 <?php endif; ?>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <?php echo $this->element('pagination'); ?>
+            </div>
+        </div>
         <hr>
         <div class="row">
             <div class="col-md-12 col-sm-12">
@@ -190,6 +195,10 @@ table th, td {
                                                                     ['escape' => False, 'confirm' => 'Are you sure you wish to delete this comment?']);
                                             ?>
                                             &nbsp;
+                                            <?= $this->Html->link('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>', 
+                                                                    ['controller' => 'bands', 'action' => 'unflag', $comment['id'], $comment['band_id']], 
+                                                                    ['escape' => False, 'confirm' => 'Are you sure you wish to un-flag this comment?']);
+                                            ?>
                                         <?php endif; ?>
                                     </td>
                                 </tr>

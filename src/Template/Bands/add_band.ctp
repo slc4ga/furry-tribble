@@ -22,7 +22,7 @@
 		            echo $this->Form->input('qr_code', [
 		                    'class' => 'form-control',
 		                    'type' => 'number',
-		                    'label' => 'QR Code'
+		                    'label' => 'Band ID'
 		                ]
 		            );
 		        ?>

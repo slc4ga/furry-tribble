@@ -15,12 +15,17 @@
 				<p>Insert some instructions here.</p>
 			</div>
 		</div>
-		<div class="row">
+		<div class="row" style="margin-bottom: 15px; padding-left: 5px;">
 			<?php foreach($bands as $band): ?>
-				<div class="col-md-3 col-sm-3">
+				<div class="col-md-3 col-sm-3 outlined">
 					<?= $this->Html->link("Band " . $band['id'], ['controller' => 'bands', 'action' => 'view', $band['id']],['class' => 'band']) ?>
 				</div>
 			<?php endforeach; ?>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<?php echo $this->element('pagination'); ?>
+			</div>
 		</div>
 	</div>
 </div>
