@@ -64,6 +64,11 @@
 						<?php endforeach; ?>
 					</tbody>
 				</table>
+				<div class="row">
+					<div class="col-md-12">
+					<?= $this->Element('pagination'); ?>
+					</div>
+				</div>
 			<?php else: ?>
 				<h4>No comments for this band yet!</h4>
 			<?php endif; ?>

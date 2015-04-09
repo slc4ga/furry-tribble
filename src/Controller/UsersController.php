@@ -14,7 +14,8 @@ class UsersController extends AppController {
     public $paginate = [
         'limit' => 100,
         'order' => [
-            'Bands.id' => 'asc'
+            'Bands.id' => 'asc',
+            'Comments.timestamp' => 'asc'
         ]
     ];
 
@@ -23,9 +24,9 @@ class UsersController extends AppController {
     }
     
     public function profile(){
-        // $this->set('username', $_SERVER['uid']);
+        $this->set('username', $_SERVER['uid']);
         $username = $_SERVER['uid'];
-        $username = 'slc4ga';
+        // $username = 'slc4ga';
 
         // get all user comments
         $commentsTable = TableRegistry::get('Comments');
@@ -33,8 +34,7 @@ class UsersController extends AppController {
         $votesTable = TableRegistry::get('UserLikes');
 
         $user = $usersTable->find('all')->where(['username' => $username])->toArray();
-        $comments = $commentsTable->find('all')->where(['user_id' => $user[0]['id']])
-                                                ->toArray();
+        $comments = $this->paginate($commentsTable->find('all')->where(['user_id' => $user[0]['id']]));
 
         foreach($comments as $com) {
             $query = $votesTable->find('all')->where(['comment_id' => $com['id']]);
@@ -55,8 +55,8 @@ class UsersController extends AppController {
     public function admin() {
         $usersTable = TableRegistry::get('Users');
 
-        // $username = $_SERVER['uid'];
-        $username = 'slc4ga';
+        $username = $_SERVER['uid'];
+        // $username = 'slc4ga';
 
         $user = $usersTable->find('all')->where(['username' => $username])->toArray();
         

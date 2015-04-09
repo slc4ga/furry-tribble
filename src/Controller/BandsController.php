@@ -46,7 +46,8 @@ class BandsController extends AppController {
             $bandsTable = TableRegistry::get('Bands');
             $usersTable = TableRegistry::get('Users');
 
-            $username = 'slc4ga';
+            // $username = 'slc4ga';
+            $username = $_SERVER['uid'];
 
             $user = $usersTable->find('all')->where(['username' => $username])->toArray();
             // check if comment already there
@@ -90,7 +91,8 @@ class BandsController extends AppController {
             $this->redirect(['controller' => 'Bands', 'action' => 'index']);
         }
 
-        $username = 'slc4ga';
+        // $username = 'slc4ga';
+        $username = $_SERVER['uid'];
 
         $commentsTable = TableRegistry::get('Comments');
         $votesTable = TableRegistry::get('UserLikes');
@@ -101,7 +103,7 @@ class BandsController extends AppController {
         $admin = $adminTable->find('all')->where(['user_id' => $user[0]['id']])->toArray();
         $this->set('admin', !empty($admin));
 
-        $comments = $commentsTable->find('all')->where(['band_id' => $id])->toArray();
+        $comments = $this->paginate($commentsTable->find('all')->where(['band_id' => $id]));
         foreach($comments as $com) {
             $query = $votesTable->find('all')->where(['comment_id' => $com['id']]);
             $query->select(['count' => $query->func()->count('*')]);
@@ -215,9 +217,12 @@ class BandsController extends AppController {
                 ->limit(100)
                 ->select(['comment_id','count' => $query->func()->count('*')]);
         $commentVotes = $query->toArray();
+
+        // $username = 'slc4ga';
+        $username = $_SERVER['uid'];
         
         $adminTable = TableRegistry::get('Admins');
-        $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
+        $user = $usersTable->find('all')->where(['username' => $username])->toArray();
         $admin = $adminTable->find('all')->where(['user_id' => $user[0]['id']])->toArray();
         $this->set('admin', !empty($admin));
 
@@ -225,7 +230,7 @@ class BandsController extends AppController {
             $comment = $commentsTable->find('all')->where(['id' => $commentGroup['comment_id']])->toArray();
             
 
-            $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
+            $user = $usersTable->find('all')->where(['username' => $username])->toArray();
             $query = $votesTable->find('all')->where(['user_id' => $user[0]['id']])->toArray();
             if(!empty($query)) {
                 $commentGroup['liked'] = True;
@@ -245,8 +250,11 @@ class BandsController extends AppController {
             $this->redirect(['controller' => 'Bands', 'action' => 'index']);
         }
 
+        // $username = 'slc4ga';
+        $username = $_SERVER['uid'];
+
         $usersTable = TableRegistry::get('Users');
-        $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
+        $user = $usersTable->find('all')->where(['username' => $username])->toArray();
         
         if($user[0]['admin'] == 0) {
             $this->redirect(['controller' => 'Bands', 'action' => 'index']);
@@ -266,8 +274,11 @@ class BandsController extends AppController {
             $this->redirect(['controller' => 'Bands', 'action' => 'index']);
         }
 
+        // $username = 'slc4ga';
+        $username = $_SERVER['uid'];
+
         $usersTable = TableRegistry::get('Users');
-        $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
+        $user = $usersTable->find('all')->where(['username' => $username])->toArray();
         
         if($user[0]['admin'] == 0) {
             $this->redirect(['controller' => 'Bands', 'action' => 'index']);
