@@ -17,14 +17,16 @@ class UsersController extends AppController {
     }
     
     public function profile(){
-        $this->set('username', $_SERVER['uid']);
+        // $this->set('username', $_SERVER['uid']);
+        $username = $_SERVER['uid'];
+        $username = 'slc4ga';
 
         // get all user comments
         $commentsTable = TableRegistry::get('Comments');
         $usersTable = TableRegistry::get('Users');
         $votesTable = TableRegistry::get('UserLikes');
 
-        $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
+        $user = $usersTable->find('all')->where(['username' => $username])->toArray();
         $comments = $commentsTable->find('all')->where(['user_id' => $user[0]['id']])
                                                 ->toArray();
 
@@ -46,7 +48,11 @@ class UsersController extends AppController {
      
     public function admin() {
         $usersTable = TableRegistry::get('Users');
-        $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
+
+        // $username = $_SERVER['uid'];
+        $username = 'slc4ga';
+
+        $user = $usersTable->find('all')->where(['username' => $username])->toArray();
         
         if($user[0]['admin'] == 0) {
             $this->redirect(['controller' => 'Users', 'action' => 'profile']);

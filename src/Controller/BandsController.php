@@ -40,7 +40,9 @@ class BandsController extends AppController {
             $bandsTable = TableRegistry::get('Bands');
             $usersTable = TableRegistry::get('Users');
 
-            $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
+            $username = 'slc4ga';
+
+            $user = $usersTable->find('all')->where(['username' => $username])->toArray();
             $comment = $commentsTable->newEntity(['user_id' => $user[0]['id']]);
             $comment = $commentsTable->patchEntity($comment, $data);
             $commentsTable->save($comment);
@@ -64,12 +66,14 @@ class BandsController extends AppController {
             $this->redirect(['controller' => 'Bands', 'action' => 'index']);
         }
 
+        $username = 'slc4ga';
+
         $commentsTable = TableRegistry::get('Comments');
         $votesTable = TableRegistry::get('UserLikes');
         $usersTable = TableRegistry::get('Users');
 
         $adminTable = TableRegistry::get('Admins');
-        $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
+        $user = $usersTable->find('all')->where(['username' => $username])->toArray();
         $admin = $adminTable->find('all')->where(['user_id' => $user[0]['id']])->toArray();
         $this->set('admin', !empty($admin));
 

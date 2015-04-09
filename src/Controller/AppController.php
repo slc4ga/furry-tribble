@@ -42,16 +42,18 @@ class AppController extends Controller {
     );
 
     public function beforeFilter(Event $event) {
-        $usersTable = TableRegistry::get('Users');
-        $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
-        if(is_null($user) || empty($user)) {
-        	$new_user = $usersTable->newEntity(['username' => $_SERVER['uid']]);
-        	debug($new_user);
-        	if($usersTable->save($new_user)) {
-                $this->Flash->success(__('You have been successfully added to the userbase.'));        
-            } 
-        }
+        // $usersTable = TableRegistry::get('Users');
+        // $user = $usersTable->find('all')->where(['username' => $_SERVER['uid']])->toArray();
+        // if(is_null($user) || empty($user)) {
+        // 	$new_user = $usersTable->newEntity(['username' => $_SERVER['uid']]);
+        // 	debug($new_user);
+        // 	if($usersTable->save($new_user)) {
+        //         $this->Flash->success(__('You have been successfully added to the userbase.'));        
+        //     } 
+        // }
         
-        $this->set('admin', $user[0]['admin'] == 1);
+        // $this->set('admin', $user[0]['admin'] == 1);
+        // $this->set('username', $_SERVER['uid']);
+        $this->set('username', 'slc4ga');
     }
 }
