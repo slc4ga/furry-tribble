@@ -27,7 +27,7 @@
 					<tbody>
 						<?php foreach ($commentVotes as $comment): ?>
 							<tr>
-								<td><?= $comment['comment']['text']?></td>
+								<td style="width: 50%"><?= $comment['comment']['text']?></td>
 								<?php if($admin): ?>
 									<td><?= $comment['comment']['username'] ?></td>
 								<?php endif; ?>
