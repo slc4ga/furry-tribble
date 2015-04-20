@@ -2,14 +2,6 @@
 	<div class="col-md-10 col-sm-10 col-md-offset-1 col-sm-offset-1">
 		<div class="row">
 			<div class="col-md-12 col-sm-12">
-				<div class="alert alert-info" role="alert">
-					<strong> Welcome to the bands site!</strong> 
-					Our github repo is a Star Trek reference, according to Dean Groves.
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12 col-sm-12">
 				<h1>Find Your Band</h1>
 				<p>Enter the number found on your band into the box below -
 
