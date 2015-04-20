@@ -35,116 +35,68 @@ $cakeDescription = 'UVA Bands';
     <?= $this->fetch('script') ?>
 </head>
 <body>
-    <div id="container">
-        <div id="content">
-            <div class="container">
-                <!-- Top navbar -->
-                <?php if(isset($admin) && $admin): ?>
-                    <header>
-                        <div class="row">
-                            <div class="col-md-5 col-sm-5 col-md-offset-6 col-sm-offset-6">
-                                <h1>
+    <div id="content">
+        <div class="container">
+        	<br>
+            <nav class="navbar navbar-default">
+				<div class="container-fluid">
+					<!-- Brand and toggle get grouped for better mobile display -->
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<!-- <a class="navbar-brand" href="#">Brand</a> -->
+						<?= $this->Html->link('Brand', ['controller' => 'Bands', 'action' => 'home'], ['class' => 'navbar-brand']); ?>
+					</div>
 
-                                    <?= 
-                                        $this->Html->link(
-                                            'Admin Panel',
-                                            ['controller' => 'Users', 'action' => 'admin'],
-                                            array (
-                                                'class' => 'btn btn-primary'
-                                            )
-                                        ) 
-                                    ?>
-                                </h1> 
-                            </div>
+					<!-- Collect the nav links, forms, and other content for toggling -->
+					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+						<ul class="nav navbar-nav">
+							<?= $this->Element('nav-link', ['linkText' => 'Home', 'controller' => 'Bands', 'action' => 'home']); ?>
+							<?= $this->Element('nav-link', ['linkText' => 'Profile', 'controller' => 'Users', 'action' => 'profile']); ?>
+							<?= $this->Element('nav-link', ['linkText' => 'All Bands', 'controller' => 'Bands', 'action' => 'index']); ?>
+							<?= $this->Element('nav-link', ['linkText' => 'Top Comments', 'controller' => 'Bands', 'action' => 'topComments']); ?>
+							<?= $this->Element('nav-link', ['linkText' => 'Active Bands', 'controller' => 'Bands', 'action' => 'activeBands']); ?>
+						</ul>
+						<?php if(isset($admin) && $admin): ?>
+							<ul class="nav navbar-nav navbar-right">
+								<?= $this->Element('nav-link', ['linkText' => 'Admin Panel', 'controller' => 'Users', 'action' => 'admin']); ?>
+							</ul>
+						<?php endif; ?>
+					</div><!-- /.navbar-collapse -->
+				</div><!-- /.container-fluid -->
+			</nav>
+			<hr>
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <!-- Flash -->
+                    <div class="row">
+                        <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1">
+                            <?= $this->Flash->render() ?>
                         </div>
-                    </header>
-                <?php endif; ?>
-                <hr>
-                <div class="row">
-                    <div class="col-md-12 col-sm-12">
-                        <!-- Flash -->
-                        <div class="row">
-                            <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1">
-                                <?= $this->Flash->render() ?>
-                            </div>
-                        </div>
-                        <!-- Content -->
-                        <div class="row">
-                            <div class="col-md-12">
-                                <?php
-                                    $myTemplates = [
-                                        'message' => '<div class="alert alert-warning">{{content}}</div>'
-                                    ];
-                                    $this->Form->templates($myTemplates);
-                                ?>
-                                <?= $this->fetch('content') ?>
-                            </div>
-                        </div>
-                        <div class="row">
-	                        <div class="col-md-2 col-md-offset-1 col-sm-2 col-sm-offset-1">
-	                        	<?= 
-                                    $this->Html->link(
-                                        'Profile',
-                                        ['controller' => 'Users', 'action' => 'profile'],
-                                        array (
-                                            'class' => 'btn btn-primary'
-                                        )
-                                    ) 
-                                ?>
-	                        </div>
-	                        <div class="col-md-2 col-sm-2">
-	                        	<?= 
-                                    $this->Html->link(
-                                        'All Bands',
-                                        ['controller' => 'bands', 'action' => 'index'],
-                                        array (
-                                            'class' => 'btn btn-primary'
-                                        )
-                                    ) 
-                                ?>
-	                        </div>
-	                        <div class="col-md-2 col-sm-2">
-	                        	<?= 
-                                    $this->Html->link(
-                                        'Home',
-                                        ['controller' => 'bands', 'action' => 'home'],
-                                        array (
-                                            'class' => 'btn btn-primary'
-                                        )
-                                    ) 
-                                ?>
-	                        </div>
-	                        <div class="col-md-2 col-sm-2">
-	                        	<?= 
-                                    $this->Html->link(
-                                        'Top Comments',
-                                        ['controller' => 'bands', 'action' => 'topComments'],
-                                        array (
-                                            'class' => 'btn btn-primary'
-                                        )
-                                    ) 
-                                ?>
-	                        </div>
-	                        <div class="col-md-2 col-sm-2">
-	                        	<?= 
-                                    $this->Html->link(
-                                        'Active Bands',
-                                        ['controller' => 'bands', 'action' => 'activeBands'],
-                                        array (
-                                            'class' => 'btn btn-primary'
-                                        )
-                                    ) 
-                                ?>
-	                        </div>
+                    </div>
+                    <!-- Content -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <?php
+                                $myTemplates = [
+                                    'message' => '<div class="alert alert-warning">{{content}}</div>'
+                                ];
+                                $this->Form->templates($myTemplates);
+                            ?>
+                            <?= $this->fetch('content') ?>
                         </div>
                     </div>
                 </div>
-                <div class="navbar-bottom">
-                    <div class="footer">
-                        <hr>
-                        &copy; 2015
-                        <br><br>
-                    </div>
+            </div>
+            <div class="navbar-bottom">
+                <div class="footer">
+                    <hr>
+                    &copy; 2015
+                    <br><br>
                 </div>
             </div>
         </div>
