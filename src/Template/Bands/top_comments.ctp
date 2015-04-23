@@ -36,22 +36,50 @@
 									<?= $comment['count'] ?>
 								</td>
 								<td>
-									<?php if(!isset($comment['liked'])): ?>
+<!-- 									<?php if(!isset($comment['liked'])): ?>
 										<?= $this->Html->link('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>', 
-																['controller' => 'bands', 'action' => 'upvote', $comment['comment']['band_id']], 
+																['controller' => 'bands', 'action' => 'upvote', $comment['id'], $band_id], 
 																['escape' => False]);
 										?>
+										&nbsp;
 									<?php endif; ?>
 									<?php if($comment['flagged'] == 0): ?>
 										<?= $this->Html->link('<span class="glyphicon glyphicon-flag" aria-hidden="true"></span>', 
-																['controller' => 'bands', 'action' => 'flag', $comment['id'], $comment['comment']['band_id']], 
+																['controller' => 'bands', 'action' => 'flag', $comment['id'], $band_id], 
 																['escape' => False]);
 										?>
 										&nbsp;
 									<?php endif; ?>
 									<?php if($admin): ?>
 										<?= $this->Html->link('<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>', 
-																['controller' => 'bands', 'action' => 'delete', $comment['id'], $comment['comment']['band_id']], 
+																['controller' => 'bands', 'action' => 'delete', $comment['id'], $band_id], 
+																['escape' => False, 'confirm' => 'Are you sure you wish to delete this comment?']);
+										?>
+										&nbsp;
+									<?php endif; ?> -->
+
+
+
+
+
+
+
+									<?php if(!isset($comment['liked'])): ?>
+										<?= $this->Html->link('<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>', 
+																['controller' => 'bands', 'action' => 'upvote', $comment['comment']['id'], $comment['comment']['band_id'], True], 
+																['escape' => False]);
+										?>
+									<?php endif; ?>
+									<?php if($comment['flagged'] == 0): ?>
+										<?= $this->Html->link('<span class="glyphicon glyphicon-flag" aria-hidden="true"></span>', 
+																['controller' => 'bands', 'action' => 'flag', $comment['comment']['id'], $comment['comment']['band_id']], 
+																['escape' => False]);
+										?>
+										&nbsp;
+									<?php endif; ?>
+									<?php if($admin): ?>
+										<?= $this->Html->link('<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>', 
+																['controller' => 'bands', 'action' => 'delete', $comment['comment']['id'], $comment['comment']['band_id']], 
 																['escape' => False, 'confirm' => 'Are you sure you wish to delete this comment?']);
 										?>
 										&nbsp;

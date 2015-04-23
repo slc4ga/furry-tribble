@@ -49,7 +49,7 @@ $cakeDescription = 'UVA Bands';
 							<span class="icon-bar"></span>
 						</button>
 						<!-- <a class="navbar-brand" href="#">Brand</a> -->
-						<?= $this->Html->link('Brand', ['controller' => 'Bands', 'action' => 'home'], ['class' => 'navbar-brand']); ?>
+						<?= $this->Html->link('IOA', ['controller' => 'Bands', 'action' => 'home'], ['class' => 'navbar-brand']); ?>
 					</div>
 
 					<!-- Collect the nav links, forms, and other content for toggling -->

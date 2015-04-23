@@ -77,7 +77,7 @@ class BandsController extends AppController {
     public function home() {
         if ($this->request->is('post')) {
             $data = $this->request->data;
-            $band = $this->Bands->find('all')->where(['qr_code' => $data['band_id']])->toArray();
+            $band = $this->Bands->find('all')->where(['id' => $data['band_id']])->toArray();
             if(!empty($band)) {
                 $this->redirect(['controller' => 'Bands', 'action' => 'addComment', $band[0]['id']]);    
             } else {
@@ -103,7 +103,7 @@ class BandsController extends AppController {
         $admin = $adminTable->find('all')->where(['user_id' => $user[0]['id']])->toArray();
         $this->set('admin', !empty($admin));
 
-        $comments = $this->paginate($commentsTable->find('all')->where(['band_id' => $id]));
+        $comments = $this->paginate($commentsTable->find('all')->where(['band_id' => $id])->order(['timestamp' => 'DESC']));
         foreach($comments as $com) {
             $query = $votesTable->find('all')->where(['comment_id' => $com['id']]);
             $query->select(['count' => $query->func()->count('*')]);
@@ -138,7 +138,7 @@ class BandsController extends AppController {
         }
     }
 
-    public function upvote($id, $band_id) {
+    public function upvote($id, $band_id, $topComments = false) {
         if(is_null($id)) {
             $this->redirect(['controller' => 'Bands', 'action' => 'index']);
         }
@@ -149,6 +149,9 @@ class BandsController extends AppController {
         $vote = $votesTable->newEntity(['user_id' => $user[0]['id'], 'comment_id' => $id]);
         if($votesTable->save($vote)) {
             $this->Flash->success(__('Your vote has been saved.'));
+            if($topComments) {
+                $this->redirect(['action' => 'topComments']);        
+            }
             $this->redirect(['action' => 'view', $band_id]);    
         }      
     }
@@ -221,25 +224,27 @@ class BandsController extends AppController {
         // $username = 'slc4ga';
         $username = $_SERVER['uid'];
         
+        
         $adminTable = TableRegistry::get('Admins');
         $user = $usersTable->find('all')->where(['username' => $username])->toArray();
         $admin = $adminTable->find('all')->where(['user_id' => $user[0]['id']])->toArray();
         $this->set('admin', !empty($admin));
-
+        
         foreach ($commentVotes as $commentGroup) {
             $comment = $commentsTable->find('all')->where(['id' => $commentGroup['comment_id']])->toArray();
+            if(count($comment) > 0) {
+                $user = $usersTable->find('all')->where(['username' => $username])->toArray();
             
-
-            $user = $usersTable->find('all')->where(['username' => $username])->toArray();
-            $query = $votesTable->find('all')->where(['user_id' => $user[0]['id']])->toArray();
-            if(!empty($query)) {
-                $commentGroup['liked'] = True;
+                $query = $votesTable->find('all')->where(['user_id' => $user[0]['id']])->where(['comment_id' => $comment[0]['id']])->toArray();
+                if(!empty($query)) {
+                    $commentGroup['liked'] = True;
+                }
+                if(!empty($admin)) {
+                    $poster = $usersTable->find('all')->where(['id' => $comment[0]['user_id']])->toArray();
+                    $comment[0]['username'] = $poster[0]['username'];
+                }
+                $commentGroup['comment'] = $comment[0];
             }
-            if(!empty($admin)) {
-                $poster = $usersTable->find('all')->where(['id' => $comment[0]['user_id']])->toArray();
-                $comment[0]['username'] = $poster[0]['username'];
-            }
-            $commentGroup['comment'] = $comment[0];
         }
         $this->set('commentVotes', $commentVotes);
              
